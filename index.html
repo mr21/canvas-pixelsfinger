@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Canvas - pixels finger</title>
+	<meta charset="UTF-8"/>
+	<meta property="og:title"       content="canvas - pixels finger"/>
+	<meta property="og:url"         content="https://mr21.github.io/canvas-pixelsfinger/"/>
+	<meta property="og:image"       content="https://mr21.github.io/canvas-pixelsfinger/thumbnail.jpg"/>
+	<meta property="og:description" content="This webpage is an interesting demo for the multi-touch. The file canvas-pixelsfinger.js simulates the effect of a finger that we pass on a still fresh paint. In the same way as Photoshop, two parameters are considered: the size of the finger and its intensity."/>
+	<meta name="viewport" content="width=device-width, user-scalable=yes"/>
+	<link rel="stylesheet" href="../_/fa/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="../_/header.css"/>
+	<link rel="stylesheet" href="../canvasloth/src/canvasloth.css"/>
+	<script src="../_/header.js"></script>
+	<script src="../canvasloth/src/canvasloth.js"></script>
+	<script src="canvas-pixelsfinger.js"></script>
+	<style>
+	.desc {
+		width: 620px;
+		margin: 25px auto;
+		text-align: center;
+		}
+		.desc small {
+			font-size: 11px;
+			}
+			.desc label + label {
+				margin-left: 2em;
+				}
+		.desc input {
+			width: 40px;
+			text-align: right;
+			color: #fff;
+			border: 0;
+			border-radius: 2px;
+			background: rgba(0,0,0,.2);
+			}
+
+	.canvasloth {
+		width: 620px;
+		height: 420px;
+		margin: 25px auto;
+		}
+		canvas {
+			background: #222;
+			}
+		.canvasloth-hud-below {
+			font: 11px/14px sans-serif;
+			}
+		.canvasloth-hud-above {
+			}
+			.canvasloth-hud-above .reset {
+				position: absolute;
+				right: 10px;
+				bottom: 10px;
+				font-weight: bold;
+				}
+	</style>
+	<script>
+	function main() {
+		new Canvasloth({
+			container: document.querySelector(".canvasloth"),
+			context: "2d",
+			// autoFocus: true,
+			fps: 60,
+			thisApp: {
+				reset: function() {
+					var	ctx = this.ctx,
+						w = ctx.canvas.width,
+						h = ctx.canvas.height;
+					ctx.fillStyle = "#222";
+					ctx.fillRect(0, 0, w, h);
+					ctx.drawImage(
+						this.img,
+						(w - this.img.width) / 2,
+						(h - this.img.height) / 2
+					);
+				},
+				finger: function(e) {
+					var rad = Math.max(e.radiusX, e.radiusY);
+					pixelsFinger(
+						this.ctx,
+						rad > 2 ? rad : this.opt_radius,
+						e.x - e.rx,
+						e.y - e.ry,
+						e.x,
+						e.y,
+						e.force || this.opt_intensity
+					);
+				}
+			},
+			ready: function(o) {
+				var
+					that = this,
+					w = o.ctx.canvas.width,
+					h = o.ctx.canvas.height;
+				this.ctx = o.ctx;
+				this.cnv = o.canvasloth;
+				this.img = this.cnv.image("tests.png");
+				this.isClicked = false;
+				this.cnv.container.querySelector(".reset").onclick = function() {
+					that.reset();
+				};
+				this.reset();
+				// options
+				var inp = document.querySelector(".desc .int input");
+				inp.onchange = function(e) {
+					var v = (parseInt(this.value) || 0) / 100;
+					if (v < 0) v = 0;
+					else if (v > 1) v = 1;
+					that.opt_intensity = v;
+				};
+				inp.onchange();
+				inp = document.querySelector(".desc .size input");
+				inp.onchange = function(e) {
+					var v = (parseInt(this.value) || 0) / 2;
+					if (v < 0) v = 0;
+					else if (v > 250) v = 250;
+					that.opt_radius = v;
+				};
+				inp.onchange();
+			},
+			loop: function() {
+			},
+			events: {
+				keyDown: function(e) {
+					if (e.key === 32)
+						this.reset();
+				},
+				mouseDown: function(e) {
+					this.isClicked = true;
+				},
+				mouseUp: function(e) {
+					this.isClicked = false;
+				},
+				mouseMove: function(e) {
+					if (this.isClicked)
+						this.finger(e);
+				},
+				touchMove: function(e) {
+					this.finger(e);
+				}
+			}
+		});
+	}
+
+	window.onload = main;
+	</script>
+</head>
+<body>
+	<div id="header">
+		<i class="fa fa-fw fa-html5"></i>
+		<h1>Canvas - pixels finger</h1>
+	</div>
+
+	<div class="desc">
+		<p>
+			Have fun by moving your fingers on these items below.<br/>
+			<small>On mobile the intensity is automatically set by the force you exercise on the screen with your fingers.</small>
+		</p>
+		<form action="/">
+			<label class="int">
+				<span><b>Intensity</b>&nbsp;:</span>
+				<input value="70" type="number" step="1" min="0" max="100" name="intensity"/>
+				<span>%</span>
+			</label>
+			<label class="size">
+				<span><b>Size</b>&nbsp;:</span>
+				<input value="21" type="number" step="1" min="0" max="500" name="size"/>
+				<span>px</span>
+			</label>
+		</form>
+	</div>
+
+	<div class="canvasloth">
+		<div class="canvasloth-assets">
+			<img src="tests.png"/>
+		</div>
+		<div class="canvasloth-hud-below">
+		</div>
+		<div class="canvasloth-hud-above">
+			<button class="reset">
+				<i class="fa fa-eraser"></i>
+				Reset
+			</button>
+		</div>
+	</div>
+</body>
+</html>
