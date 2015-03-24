@@ -27,7 +27,24 @@
 			avx = Math.abs(vx),
 			avy = Math.abs(vy),
 			xinc,
-			yinc
+			yinc,
+			x = srcX,
+			y = srcY,
+			xSrcInt = x,
+			ySrcInt = y,
+			xDstInt = x,
+			yDstInt = y,
+			exec = false,
+			execImage = 0,
+			images = [
+				ctx.getImageData(0, 0, w, h),
+				ctx.getImageData(0, 0, w, h)
+			],
+			px = [
+				images[0].data,
+				images[1].data
+			],
+			nbPxBytes = px[0].length
 		;
 
 		if (avx > avy) {
@@ -55,49 +72,33 @@
 							di = ind(
 								dx + ix,
 								dy + iy
-							),
-							r = pxsrc[si    ],
-							g = pxsrc[si + 1],
-							b = pxsrc[si + 2],
-							a = pxsrc[si + 3]
+							)
 						;
 
-						dist = (1 - dist / squareRadius) * intensity;
+						if (si >= 0 && si < nbPxBytes &&
+						    di >= 0 && di < nbPxBytes) {
 
-						pxdst[di    ] += (r - pxdst[di    ]) * dist;
-						pxdst[di + 1] += (g - pxdst[di + 1]) * dist;
-						pxdst[di + 2] += (b - pxdst[di + 2]) * dist;
-						pxdst[di + 3] += (a - pxdst[di + 3]) * dist;
+							var
+								r = pxsrc[si    ],
+								g = pxsrc[si + 1],
+								b = pxsrc[si + 2],
+								a = pxsrc[si + 3]
+							;
 
+							dist = (1 - dist / squareRadius) * intensity;
+
+							pxdst[di    ] += (r - pxdst[di    ]) * dist;
+							pxdst[di + 1] += (g - pxdst[di + 1]) * dist;
+							pxdst[di + 2] += (b - pxdst[di + 2]) * dist;
+							pxdst[di + 3] += (a - pxdst[di + 3]) * dist;
+
+						}
 					}
 				}
 			}
 		}
 
-		var
-			x = srcX,
-			y = srcY,
-			xSrcInt = x,
-			ySrcInt = y,
-			xDstInt = x,
-			yDstInt = y,
-			exec = false,
-			iter = Math.max(avx, avy)
-		;
-
-		var
-			imageSelect = 0,
-			images = [
-				ctx.getImageData(0, 0, w, h),
-				ctx.getImageData(0, 0, w, h)
-			],
-			px = [
-				images[0].data,
-				images[1].data
-			]
-		;
-
-		for (; iter !== 0; --iter) {
+		for (var iter = Math.max(avx, avy); iter !== 0; --iter) {
 
 			x += xinc;
 			y += yinc;
@@ -115,17 +116,17 @@
 			if (exec) {
 				exec = false;
 				proc(
-					px[imageSelect],
-					px[1 * !imageSelect],
+					px[execImage],
+					px[1 * !execImage],
 					xSrcInt, ySrcInt,
 					xDstInt, yDstInt
 				);
-				imageSelect = 1 * !imageSelect;
+				execImage = 1 * !execImage;
 			}
 
 		}
 
-		ctx.putImageData(images[imageSelect], 0, 0);
+		ctx.putImageData(images[execImage], 0, 0);
 
 	};
 
