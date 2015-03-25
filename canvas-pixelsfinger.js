@@ -1,3 +1,8 @@
+/*
+	canvas-pixelsfinger - 1.0
+	https://github.com/Mr21/canvas-pixelsfinger
+*/
+
 (function() {
 
 	window.pixelsFinger = function
@@ -74,7 +79,6 @@
 								dy + iy
 							)
 						;
-
 						if (si >= 0 && si < nbPxBytes &&
 						    di >= 0 && di < nbPxBytes) {
 
