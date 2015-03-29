@@ -48,25 +48,30 @@
 			}
 		.canvasloth-hud-above {
 			}
-			.canvasloth-hud-above .reset {
+			.canvasloth-hud-above .btns {
 				position: absolute;
 				right: 10px;
 				bottom: 10px;
+				}
+			.canvasloth-hud-above .btns * {
 				font-weight: bold;
 				}
 	</style>
 	<script>
 	function main() {
-		new Canvasloth({
+		window.cnv = new Canvasloth({
 			container: document.querySelector(".canvasloth"),
 			context: "2d",
 			// autoFocus: true,
 			fps: 60,
 			thisApp: {
 				reset: function() {
-					var	ctx = this.ctx,
-						w = ctx.canvas.width,
-						h = ctx.canvas.height;
+					var
+						ctx = this.ctx,
+						cnv = this.cnv,
+						w = cnv.getWidth(),
+						h = cnv.getHeight()
+					;
 					ctx.fillStyle = "#222";
 					ctx.fillRect(0, 0, w, h);
 					ctx.drawImage(
@@ -76,14 +81,20 @@
 					);
 				},
 				finger: function(e) {
-					var rad = Math.max(e.radiusX, e.radiusY);
+					var
+						cnv = this.cnv,
+						w = cnv.getWidth(),
+						h = cnv.getHeight(),
+						zoom = cnv.getZoom(),
+						rad = Math.max(e.radiusX, e.radiusY)
+					;
 					pixelsFinger(
 						this.ctx,
 						rad > 2 ? rad : this.opt_radius,
-						e.x - e.rx,
-						e.y - e.ry,
-						e.x,
-						e.y,
+						(e.x - e.rx) * zoom,
+						(e.y - e.ry) * zoom,
+						e.x * zoom,
+						e.y * zoom,
 						e.force || this.opt_intensity
 					);
 				}
@@ -91,8 +102,8 @@
 			ready: function(o) {
 				var
 					that = this,
-					w = o.ctx.canvas.width,
-					h = o.ctx.canvas.height;
+					isFullscreen = false
+				;
 				this.ctx = o.ctx;
 				this.cnv = o.canvasloth;
 				this.img = this.cnv.image("tests.png");
@@ -101,6 +112,12 @@
 					that.reset();
 				};
 				this.reset();
+				this.cnv.container.querySelector(".fullscreen").onclick = function() {
+					that.cnv.fullscreen(isFullscreen = !isFullscreen);
+					this.firstChild.className = isFullscreen
+						? "fa fa-compress"
+						: "fa fa-expand";
+				};
 				// options
 				var inp = document.querySelector(".desc .int input");
 				inp.onchange = function(e) {
@@ -178,10 +195,10 @@
 		<div class="canvasloth-hud-below">
 		</div>
 		<div class="canvasloth-hud-above">
-			<button class="reset">
-				<i class="fa fa-eraser"></i>
-				Reset
-			</button>
+			<div class="btns">
+				<button class="reset"><i class="fa fa-eraser"></i> Reset</button>
+				<button class="fullscreen"><i class="fa fa-expand"></i></button>
+			</div>
 		</div>
 	</div>
 </body>
