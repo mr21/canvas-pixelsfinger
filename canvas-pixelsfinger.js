@@ -1,5 +1,5 @@
 /*
-	canvas-pixelsfinger - 1.1
+	canvas-pixelsfinger - 1.2
 	https://github.com/Mr21/canvas-pixelsfinger
 */
 
@@ -26,30 +26,42 @@
 		var
 			w = ctx.canvas.width,
 			h = ctx.canvas.height,
-			squareRadius = radius * radius,
-			vx = dstX - srcX,
-			vy = dstY - srcY,
-			avx = Math.abs(vx),
-			avy = Math.abs(vy),
-			xinc,
-			yinc,
-			x = srcX,
-			y = srcY,
-			xSrcInt = x,
-			ySrcInt = y,
-			xDstInt = x,
-			yDstInt = y,
+			xImgPart,
+			yImgPart,
+			wImgPart,
+			hImgPart
+		;
+
+		xImgPart = Math.min(srcX, dstX); xImgPart -= Math.min(radius, xImgPart);
+		yImgPart = Math.min(srcY, dstY); yImgPart -= Math.min(radius, yImgPart);
+		wImgPart = Math.max(srcX, dstX); wImgPart += Math.min(radius, w - wImgPart);
+		hImgPart = Math.max(srcY, dstY); hImgPart += Math.min(radius, h - hImgPart);
+
+		var
 			exec = false,
 			execImage = 0,
 			images = [
-				ctx.getImageData(0, 0, w, h),
-				ctx.getImageData(0, 0, w, h)
+				ctx.getImageData(xImgPart, yImgPart, wImgPart, hImgPart),
+				ctx.getImageData(xImgPart, yImgPart, wImgPart, hImgPart)
 			],
 			px = [
 				images[0].data,
 				images[1].data
 			],
-			nbPxBytes = px[0].length
+			nbPxBytes = px[0].length,
+			x = srcX - xImgPart,
+			y = srcY - yImgPart,
+			xinc,
+			yinc,
+			xSrcInt = x,
+			ySrcInt = y,
+			xDstInt = x,
+			yDstInt = y,
+			squareRadius = radius * radius,
+			vx = dstX - srcX,
+			vy = dstY - srcY,
+			avx = Math.abs(vx),
+			avy = Math.abs(vy)
 		;
 
 		if (avx > avy) {
@@ -60,7 +72,7 @@
 			yinc = vy > 0 ? 1 : -1;
 		}
 
-		function ind(x, y) { return (x + y * w) * 4; }
+		function ind(x, y) { return (x + y * wImgPart) * 4; }
 
 		function proc(pxsrc, pxdst, x, y, dx, dy) {
 			var ix, iy, dist, si, di;
@@ -69,12 +81,12 @@
 				for (ix = -radius; ix < radius; ++ix)
 
 					if ((dist = ix * ix + iy * iy) < squareRadius &&
-						dx + ix >= 0 && dx + ix < w &&
-						dy + iy >= 0 && dy + iy < h)
+					    dx + ix >= 0 && dx + ix < wImgPart &&
+					    dy + iy >= 0 && dy + iy < hImgPart)
 					{
 						di = ind(dx + ix, dy + iy);
-						if (x + ix < 0 || x + ix >= w ||
-							y + iy < 0 || y + iy >= h) {
+						if (x + ix < 0 || x + ix >= wImgPart ||
+						    y + iy < 0 || y + iy >= hImgPart) {
 							pxdst[di    ] =
 							pxdst[di + 1] =
 							pxdst[di + 2] =
@@ -91,10 +103,8 @@
 		}
 
 		for (var iter = Math.max(avx, avy); iter > 0; --iter) {
-
 			x += xinc;
 			y += yinc;
-
 			if (xSrcInt !== Math.round(x)) {
 				exec = true;
 				xSrcInt = xDstInt;
@@ -109,17 +119,14 @@
 				exec = false;
 				proc(
 					px[execImage],
-					px[1 * !execImage],
+					px[execImage = 1 * !execImage],
 					xSrcInt, ySrcInt,
 					xDstInt, yDstInt
 				);
-				execImage = 1 * !execImage;
 			}
-
 		}
 
-		ctx.putImageData(images[execImage], 0, 0);
-
+		ctx.putImageData(images[execImage], xImgPart, yImgPart);
 	};
 
 })();
