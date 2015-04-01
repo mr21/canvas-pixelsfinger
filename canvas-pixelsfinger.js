@@ -1,5 +1,5 @@
 /*
-	canvas-pixelsfinger - 1.0
+	canvas-pixelsfinger - 1.1
 	https://github.com/Mr21/canvas-pixelsfinger
 */
 
@@ -63,46 +63,34 @@
 		function ind(x, y) { return (x + y * w) * 4; }
 
 		function proc(pxsrc, pxdst, x, y, dx, dy) {
-			for (    var iy = -radius; iy < radius; ++iy) {
-				for (var ix = -radius; ix < radius; ++ix) {
+			var ix, iy, dist, si, di;
 
-					var dist = ix * ix + iy * iy;
-					if (dist < squareRadius) {
+			for (    iy = -radius; iy < radius; ++iy)
+				for (ix = -radius; ix < radius; ++ix)
 
-						var
-							si = ind(
-								x + ix,
-								y + iy
-							),
-							di = ind(
-								dx + ix,
-								dy + iy
-							)
-						;
-						if (si >= 0 && si < nbPxBytes &&
-						    di >= 0 && di < nbPxBytes) {
-
-							var
-								r = pxsrc[si    ],
-								g = pxsrc[si + 1],
-								b = pxsrc[si + 2],
-								a = pxsrc[si + 3]
-							;
-
+					if ((dist = ix * ix + iy * iy) < squareRadius &&
+						dx + ix >= 0 && dx + ix < w &&
+						dy + iy >= 0 && dy + iy < h)
+					{
+						di = ind(dx + ix, dy + iy);
+						if (x + ix < 0 || x + ix >= w ||
+							y + iy < 0 || y + iy >= h) {
+							pxdst[di    ] =
+							pxdst[di + 1] =
+							pxdst[di + 2] =
+							pxdst[di + 3] = 0;
+						} else {
+							si = ind(x + ix, y + iy);
 							dist = (1 - dist / squareRadius) * intensity;
-
-							pxdst[di    ] += (r - pxdst[di    ]) * dist;
-							pxdst[di + 1] += (g - pxdst[di + 1]) * dist;
-							pxdst[di + 2] += (b - pxdst[di + 2]) * dist;
-							pxdst[di + 3] += (a - pxdst[di + 3]) * dist;
-
+							pxdst[di    ] += (pxsrc[si    ] - pxdst[di    ]) * dist;
+							pxdst[di + 1] += (pxsrc[si + 1] - pxdst[di + 1]) * dist;
+							pxdst[di + 2] += (pxsrc[si + 2] - pxdst[di + 2]) * dist;
+							pxdst[di + 3] += (pxsrc[si + 3] - pxdst[di + 3]) * dist;
 						}
 					}
-				}
-			}
 		}
 
-		for (var iter = Math.max(avx, avy); iter !== 0; --iter) {
+		for (var iter = Math.max(avx, avy); iter > 0; --iter) {
 
 			x += xinc;
 			y += yinc;
