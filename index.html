@@ -60,7 +60,7 @@
 		window.cnv = new Canvasloth({
 			container: document.querySelector(".canvasloth"),
 			context: "2d",
-			// autoFocus: true,
+			autoFocus: true,
 			fps: 60,
 			thisApp: {
 				reset: function() {
@@ -100,22 +100,32 @@
 			ready: function(o) {
 				var
 					that = this,
-					isFullscreen = false
+					ctn = o.canvasloth.container
 				;
 				this.ctx = o.ctx;
 				this.cnv = o.canvasloth;
 				this.img = this.cnv.image("tests.png");
 				this.isClicked = false;
-				this.cnv.container.querySelector(".reset").onclick = function() {
+
+				// reset
+				ctn.querySelector(".reset").onclick = function() {
 					that.reset();
 				};
 				this.reset();
-				this.cnv.container.querySelector(".fullscreen").onclick = function() {
-					that.cnv.fullscreen(isFullscreen = !isFullscreen);
-					this.firstChild.className = isFullscreen
+
+				// fullscreen
+				this.btnFullscreen = ctn.querySelector(".fullscreen");
+				this.btnFullscreenIcon = this.btnFullscreen.querySelector("i");
+				this.btnFullscreen.onclick = function() {
+					that.cnv.toggleFullscreen();
+				};
+				this.fullscreenchange = function(b) {
+					this.btnFullscreenIcon.className = b
 						? "fa fa-compress"
 						: "fa fa-expand";
 				};
+				this.fullscreenchange(false);
+
 				// options
 				var inp = document.querySelector(".desc .int input");
 				inp.onchange = function(e) {
@@ -133,8 +143,7 @@
 					that.opt_radius = v;
 				};
 				inp.onchange();
-			},
-			loop: function() {
+
 			},
 			events: {
 				keyDown: function(e) {
@@ -153,6 +162,9 @@
 				},
 				touchMove: function(e) {
 					this.finger(e);
+				},
+				fullscreenchange: function(e) {
+					this.fullscreenchange(e.isFullscreen);
 				}
 			}
 		});
@@ -195,7 +207,7 @@
 		<div class="canvasloth-hud-above">
 			<div class="btns">
 				<button class="reset"><i class="fa fa-eraser"></i> Reset</button>
-				<button class="fullscreen"><i class="fa fa-expand"></i></button>
+				<button class="fullscreen"><i></i></button>
 			</div>
 		</div>
 	</div>
