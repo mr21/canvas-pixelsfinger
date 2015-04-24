@@ -88,7 +88,7 @@
 					;
 					pixelsFinger(
 						this.ctx,
-						rad > 2 ? rad : this.opt_radius,
+						(rad > 2 ? rad : this.opt_radius) * this.cnv.getZoom(),
 						(e.x - e.rx) * zoom,
 						(e.y - e.ry) * zoom,
 						e.x * zoom,
