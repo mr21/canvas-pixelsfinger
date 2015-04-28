@@ -48,7 +48,6 @@
 				images[0].data,
 				images[1].data
 			],
-			nbPxBytes = px[0].length,
 			x = srcX - xImgPart,
 			y = srcY - yImgPart,
 			xinc,

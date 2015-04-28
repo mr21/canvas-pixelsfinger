@@ -67,28 +67,26 @@
 					var
 						ctx = this.ctx,
 						cnv = this.cnv,
-						w = cnv.getWidth(),
-						h = cnv.getHeight()
+						size = cnv.size()
 					;
 					ctx.fillStyle = "#222";
-					ctx.fillRect(0, 0, w, h);
+					ctx.fillRect(0, 0, size.w, size.h);
 					ctx.drawImage(
 						this.img,
-						(w - this.img.width) / 2,
-						(h - this.img.height) / 2
+						(size.w - this.img.width ) / 2,
+						(size.h - this.img.height) / 2
 					);
 				},
 				finger: function(e) {
 					var
 						cnv = this.cnv,
-						w = cnv.getWidth(),
-						h = cnv.getHeight(),
-						zoom = cnv.getZoom(),
+						size = cnv.size(),
+						zoom = cnv.zoom(),
 						rad = Math.max(e.radiusX, e.radiusY)
 					;
 					pixelsFinger(
 						this.ctx,
-						(rad > 2 ? rad : this.opt_radius) * this.cnv.getZoom(),
+						(rad > 2 ? rad : this.opt_radius) * this.cnv.zoom(),
 						(e.x - e.rx) * zoom,
 						(e.y - e.ry) * zoom,
 						e.x * zoom,
