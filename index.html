@@ -61,7 +61,8 @@
 			container: document.querySelector(".canvasloth"),
 			context: "2d",
 			autoFocus: true,
-			fps: 60,
+			fps: 1,
+			resolutionVariable: false,
 			thisApp: {
 				reset: function() {
 					var
@@ -86,11 +87,11 @@
 					;
 					pixelsFinger(
 						this.ctx,
-						(rad > 2 ? rad : this.opt_radius) * this.cnv.zoom(),
-						(e.x - e.rx) * zoom,
-						(e.y - e.ry) * zoom,
-						e.x * zoom,
-						e.y * zoom,
+						rad > 2 ? rad : this.opt_radius,
+						e.x - e.rx,
+						e.y - e.ry,
+						e.x,
+						e.y,
 						e.force || this.opt_intensity
 					);
 				}
