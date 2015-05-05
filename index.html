@@ -16,8 +16,8 @@
 	<script src="canvas-pixelsfinger.js"></script>
 	<style>
 	.desc {
-		width: 620px;
 		margin: 25px auto;
+		padding: 0 20px;
 		text-align: center;
 		}
 		.desc small {
@@ -54,6 +54,14 @@
 			.canvasloth-hud-above .btns * {
 				font-weight: bold;
 				}
+
+	@media screen and (max-width: 800px) {
+		.canvasloth {
+			width: 60%;
+			height: 330px;
+			}
+	}
+
 	</style>
 	<script>
 	function main() {
@@ -62,6 +70,8 @@
 			context: "2d",
 			autoFocus: true,
 			fps: 1,
+			w: 620,
+			h: 420,
 			resolutionVariable: false,
 			thisApp: {
 				reset: function() {
@@ -206,7 +216,7 @@
 		<div class="canvasloth-hud-above">
 			<div class="btns">
 				<button class="reset"><i class="fa fa-eraser"></i> Reset</button>
-				<button class="fullscreen"><i></i></button>
+				<button class="fullscreen"><i></i> Fullscreen</button>
 			</div>
 		</div>
 	</div>
