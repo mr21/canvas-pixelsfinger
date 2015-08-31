@@ -1,5 +1,5 @@
 /*
-	canvas-pixelsfinger - 1.2
+	canvas-pixelsfinger - 1.0.0
 	https://github.com/Mr21/canvas-pixelsfinger
 */
 
