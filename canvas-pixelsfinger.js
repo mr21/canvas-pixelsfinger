@@ -1,5 +1,5 @@
 /*
-	canvas-pixelsfinger - 1.0.0
+	canvas-pixelsfinger - 1.1.0
 	https://github.com/Mr21/canvas-pixelsfinger
 */
 
@@ -19,23 +19,21 @@
 		dstX = Math.round( dstX );
 		dstY = Math.round( dstY );
 
-		if ( srcX === dstX && srcY === dstY ) {
-			return;
-		}
-
 		var
 			w = ctx.canvas.width,
 			h = ctx.canvas.height,
-			xImgPart,
-			yImgPart,
-			wImgPart,
-			hImgPart
+			xImgPart, yImgPart,
+			wImgPart, hImgPart
 		;
 
 		xImgPart = Math.min( srcX, dstX ), xImgPart -= Math.min( radius, xImgPart );
 		yImgPart = Math.min( srcY, dstY ), yImgPart -= Math.min( radius, yImgPart );
 		wImgPart = Math.max( srcX, dstX ), wImgPart += Math.min( radius, w - wImgPart );
 		hImgPart = Math.max( srcY, dstY ), hImgPart += Math.min( radius, h - hImgPart );
+
+		if ( wImgPart <= 1 || hImgPart <= 1 ) {
+			return;
+		}
 
 		var
 			exec = false,
@@ -108,13 +106,19 @@
 			for (     iy = -radius; iy < radius; ++iy ) {
 				for ( ix = -radius; ix < radius; ++ix ) {
 
-					if ( ( dist = ix * ix + iy * iy ) < squareRadius &&
-					    dx + ix >= 0 && dx + ix < wImgPart &&
-					    dy + iy >= 0 && dy + iy < hImgPart ) {
+					dist = ix * ix + iy * iy;
+					if (
+						dist < squareRadius &&
+						dx + ix >= 0 && dx + ix < wImgPart &&
+						dy + iy >= 0 && dy + iy < hImgPart
+					) {
 
 						di = ind( dx + ix, dy + iy );
-						if ( x + ix < 0 || x + ix >= wImgPart ||
-						     y + iy < 0 || y + iy >= hImgPart ) {
+
+						if (
+							x + ix < 0 || x + ix >= wImgPart ||
+							y + iy < 0 || y + iy >= hImgPart
+						) {
 							pxdst[ di     ] =
 							pxdst[ di + 1 ] =
 							pxdst[ di + 2 ] =
@@ -133,4 +137,4 @@
 		}
 	};
 
-} )();
+})();
