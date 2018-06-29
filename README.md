@@ -1,5 +1,3 @@
-[Demo](https://mr21.github.io/canvas-pixelsfinger/) /
-[About ![thumbnail](https://mr21.github.io/_/flags/gb.gif)](https://mr21.github.io/#/p=canvas-pixelsfinger&lang=en)
-[![thumbnail](https://mr21.github.io/_/flags/fr.gif)](https://mr21.github.io/#/p=canvas-pixelsfinger&lang=fr)
+# canvas - pixels finger
 
-![thumbnail](https://mr21.github.io/canvas-pixelsfinger/thumbnail.jpg)
+This experimentation is imitating a classic Photoshop's tool: *finger* :D
